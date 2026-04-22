@@ -15,7 +15,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes (to be added)
+// Rutas
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/progress', require('./routes/progressRoutes'));
+app.use('/api/evidencias', require('./routes/evidenciaRoutes'));
+app.use('/api/exams', require('./routes/examRoutes'));
+app.use('/api/analisis', require('./routes/analisisRoutes'));
+
 app.get('/', (req, res) => {
   res.send('API is running...');
 });

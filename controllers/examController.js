@@ -1,0 +1,33 @@
+const Exam = require('../models/Exam');
+
+// @desc    Submit an exam
+// @route   POST /api/exams
+const submitExam = async (req, res) => {
+  try {
+    const { examName, score, answers } = req.body;
+
+    const exam = await Exam.create({
+      user: req.user._id,
+      examName,
+      score,
+      answers
+    });
+
+    res.status(201).json(exam);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get user exams
+// @route   GET /api/exams
+const getExams = async (req, res) => {
+  try {
+    const exams = await Exam.find({ user: req.user._id }).sort('-takenAt');
+    res.json(exams);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { submitExam, getExams };
