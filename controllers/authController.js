@@ -8,9 +8,22 @@ const generateToken = (id) => {
 // @desc    Register new user
 // @route   POST /api/auth/register
 const registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, accessCode } = req.body;
 
   try {
+    // Validar código de acceso según el rol
+    if (role === 'profesor') {
+      if (accessCode !== '2026@PS-CAA') {
+        return res.status(400).json({ message: 'Código de acceso para profesor inválido.' });
+      }
+    } else if (role === 'estudiante') {
+      if (accessCode !== '2026#CAA-PS') {
+        return res.status(400).json({ message: 'Código de acceso para estudiante inválido.' });
+      }
+    } else {
+      return res.status(400).json({ message: 'Rol inválido o código de acceso faltante.' });
+    }
+
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -21,7 +34,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
-      role: role || 'student'
+      role: role || 'estudiante'
     });
 
     if (user) {
