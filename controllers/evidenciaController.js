@@ -28,7 +28,18 @@ const uploadEvidencia = async (req, res) => {
 // @route   GET /api/evidencias
 const getEvidencias = async (req, res) => {
   try {
-    const evidencias = await Evidencia.find({ user: req.user._id }).sort('-fechaSubida');
+    const requesterRole = req.user.role;
+    let query = { user: req.user._id };
+
+    if (requesterRole === 'administrador' || requesterRole === 'profesor') {
+      // Admin/Profesor ven todo
+      const evidencias = await Evidencia.find({})
+        .populate('user', 'name email')
+        .sort('-fechaSubida');
+      return res.json(evidencias);
+    }
+
+    const evidencias = await Evidencia.find(query).sort('-fechaSubida');
     res.json(evidencias);
   } catch (error) {
     res.status(500).json({ message: error.message });
