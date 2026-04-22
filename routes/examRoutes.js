@@ -7,4 +7,6 @@ router.route('/')
   .post(protect, submitExam)
   .get(protect, getExams);
 
+router.get('/all', protect, getAllResults);
+
 module.exports = router;

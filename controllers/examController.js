@@ -34,6 +34,22 @@ const getExams = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+// @desc    Get all exam results (Admin/Profesor only)
+// @route   GET /api/exams/all
+const getAllResults = async (req, res) => {
+  try {
+    if (req.user.role !== 'administrador' && req.user.role !== 'profesor') {
+      return res.status(403).json({ message: 'No autorizado para ver resultados globales' });
+    }
+
+    const exams = await Exam.find({})
+      .populate('user', 'name email')
+      .sort('-takenAt');
+    
+    res.json(exams);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-module.exports = { submitExam, getExams };
+module.exports = { submitExam, getExams, getAllResults };
