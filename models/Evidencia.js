@@ -12,15 +12,19 @@ const evidenciaSchema = new mongoose.Schema({
   },
   archivoUrl: {
     type: String, // Aquí se guardará la URL de Cloudinary
-    required: true
+    required: false
   },
   tipoArchivo: {
-    type: String, // 'pdf', 'image', 'word', etc.
+    type: String, // 'pdf', 'image', 'word', 'texto', etc.
     required: true
+  },
+  contenido: {
+    type: String, // Para evidencias de texto (foro, conclusiones)
+    required: false
   },
   cloudinaryId: {
     type: String, // Para poder borrarlo después si se requiere
-    required: true
+    required: false
   },
   fechaSubida: {
     type: Date,

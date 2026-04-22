@@ -35,4 +35,27 @@ const getEvidencias = async (req, res) => {
   }
 };
 
-module.exports = { uploadEvidencia, getEvidencias };
+// @desc    Save text-only evidence (Foro/Conclusiones)
+// @route   POST /api/evidencias/texto
+const saveTextEvidencia = async (req, res) => {
+  try {
+    const { titulo, contenido, tipoArchivo } = req.body;
+
+    if (!contenido) {
+      return res.status(400).json({ message: 'El contenido es obligatorio' });
+    }
+
+    const evidencia = await Evidencia.create({
+      user: req.user._id,
+      titulo,
+      contenido,
+      tipoArchivo: tipoArchivo || 'texto',
+    });
+
+    res.status(201).json(evidencia);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { uploadEvidencia, getEvidencias, saveTextEvidencia };
