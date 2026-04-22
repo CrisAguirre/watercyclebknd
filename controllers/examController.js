@@ -34,6 +34,8 @@ const getExams = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
 // @desc    Get all exam results (Admin/Profesor only)
 // @route   GET /api/exams/all
 const getAllResults = async (req, res) => {
