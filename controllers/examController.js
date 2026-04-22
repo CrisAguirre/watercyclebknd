@@ -6,6 +6,12 @@ const submitExam = async (req, res) => {
   try {
     const { examName, score, answers } = req.body;
 
+    // Verificar cantidad de intentos previos
+    const attempts = await Exam.countDocuments({ user: req.user._id, examName });
+    if (attempts >= 2) {
+      return res.status(400).json({ message: 'Has alcanzado el límite máximo de 2 intentos para esta evaluación.' });
+    }
+
     const exam = await Exam.create({
       user: req.user._id,
       examName,
