@@ -99,4 +99,43 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, authUser, getUserProfile };
+// @desc    Login or create guest user (no credentials required)
+// @route   POST /api/auth/guest
+const guestLogin = async (req, res) => {
+  try {
+    const guestEmail = 'invitado@watercycle.app';
+
+    // Buscar si ya existe el usuario invitado
+    let guest = await User.findOne({ email: guestEmail });
+
+    if (!guest) {
+      // Crear el usuario invitado una sola vez
+      guest = await User.create({
+        name: 'Invitado',
+        email: guestEmail,
+        password: Math.random().toString(36) + Math.random().toString(36), // contraseña aleatoria, nunca se usa
+        role: 'estudiante'
+      });
+    }
+
+    // Registrar historial de login
+    guest.loginHistory.push({
+      loginTime: new Date(),
+      ipAddress: req.ip || req.connection.remoteAddress
+    });
+    await guest.save();
+
+    res.json({
+      _id: guest._id,
+      name: guest.name,
+      email: guest.email,
+      role: guest.role,
+      isGuest: true,
+      token: generateToken(guest._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, authUser, getUserProfile, guestLogin };
